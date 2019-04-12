@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#my2048 {
+    margin: auto;
+    position: relative;
+}
+
+#my2048 div {
+    position: absolute;
+    text-align: center;
+}
