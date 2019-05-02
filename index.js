@@ -106,9 +106,12 @@ function DealOverlap(arr) {
     tempArr.push(arr[0]);
 
     for (var i = 1; i < arr.length; i++) {
+        var tempDiv;
         var temp = tempArr.length - 1;
-        if (arr[i].val == tempArr[temp].val && !tempArr[temp].next) {
-            tempArr[temp].next = arr[i];
+        if (arr[i].val == tempArr[temp].val && !tempArr[temp].last) {
+            tempDiv = arr[i];
+            tempDiv.last = tempArr[temp];
+            tempArr[temp] = tempDiv;
         }
         else {
             tempArr.push(arr[i]);
@@ -125,14 +128,7 @@ function move(temp, direction, newRow, newCol) {
     temp.style.left = spacing * (newCol + 1) + squareWidth * newCol + "px";
     temp.row = newRow;
     temp.col = newCol;
-    if (boardArr[newRow][newCol]) {
-        var oldTemp = boardArr[newRow][newCol];
-        boardArr[newRow][newCol] = temp;
-        boardArr[newRow][newCol].last = oldTemp;
-    }
-    else {
-        boardArr[newRow][newCol] = temp;
-    }
+    boardArr[newRow][newCol] = temp;
 }
 
 // 分析移动操作
@@ -149,11 +145,11 @@ function analysisActions(direction) {
             }
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
+                if (tempArr[k].last && tempArr[k].last.col != k) {
+                    move(tempArr[k].last, direction, i, k);
+                }
                 if (tempArr[k].col != k) {
                     move(tempArr[k], direction, i, k);
-                }
-                if (tempArr[k].next) {
-                    move(tempArr[k].next, direction, i, k);
                 }
             }
         }
@@ -170,11 +166,11 @@ function analysisActions(direction) {
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
                 var newCol = boardArr[i].length - 1 - k;
+                if (tempArr[k].last && tempArr[k].last.col != newCol) {
+                    move(tempArr[k].last, direction, i, newCol);
+                }
                 if (tempArr[k].col != newCol) {
                     move(tempArr[k], direction, i, newCol);
-                }
-                if (tempArr[k].next) {
-                    move(tempArr[k].next, direction, i, newCol);
                 }
             }
         }
@@ -190,11 +186,11 @@ function analysisActions(direction) {
             }
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
+                if (tempArr[k].last && tempArr[k].last.row != k) {
+                    move(tempArr[k].last, direction, k, j);
+                }
                 if (tempArr[k].row != k) {
                     move(tempArr[k], direction, k, j);
-                }
-                if (tempArr[k].next) {
-                    move(tempArr[k].next, direction, k, j);
                 }
             }
         }
@@ -211,11 +207,11 @@ function analysisActions(direction) {
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
                 var newRow = boardArr[j].length - 1 - k;
+                if (tempArr[k].last && tempArr[k].last.row != newRow) {
+                    move(tempArr[k].last, direction, newRow, j);
+                }
                 if (tempArr[k].row != newRow) {
                     move(tempArr[k], direction, newRow, j);
-                }
-                if (tempArr[k].next) {
-                    move(tempArr[k].next, direction, newRow, j);
                 }
             }
         }
@@ -245,10 +241,9 @@ function isOver() {
     for (var i = 0; i < boardArr.length; i++) {
         for (var j = 0; j < boardArr[i].length; j++) {
             if (0 == boardArr[i][j]) {
-                console.log(boardArr);
                 return false;
             }
-            if (boardArr[i][j + 1] && boardArr[i][j + 1].val == boardArr[i][j].val || boardArr[i + 1][j] && boardArr[i + 1][j].val == boardArr[i][j].val) {
+            if (boardArr[i][j + 1] && boardArr[i][j + 1].val == boardArr[i][j].val || boardArr[i+1] && boardArr[i + 1][j] && boardArr[i + 1][j].val == boardArr[i][j].val) {
                 return false;
             }
         }
