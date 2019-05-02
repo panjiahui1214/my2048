@@ -119,14 +119,6 @@ function DealOverlap(arr) {
 
 // 移动小方块
 function move(temp, direction, newRow, newCol) {
-    setDivNewInfo(temp, direction, newRow, newCol);
-    if (temp.next) {
-        setDivNewInfo(temp.next, direction, newRow, newCol);
-    }
-}
-
-// 重置div属性
-function setDivNewInfo(temp, direction, newRow, newCol) {
     boardArr[temp.row][temp.col] = 0;
     temp.style.transition = directionMap[direction].key + " 0.3s";
     temp.style.top = spacing * (newRow + 1) + squareWidth * newRow + "px";
@@ -157,8 +149,11 @@ function analysisActions(direction) {
             }
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
-                if (tempArr[k].col != k || tempArr[k].next) {
+                if (tempArr[k].col != k) {
                     move(tempArr[k], direction, i, k);
+                }
+                if (tempArr[k].next) {
+                    move(tempArr[k].next, direction, i, k);
                 }
             }
         }
@@ -175,8 +170,11 @@ function analysisActions(direction) {
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
                 var newCol = boardArr[i].length - 1 - k;
-                if (tempArr[k].col != newCol || tempArr[k].next) {
+                if (tempArr[k].col != newCol) {
                     move(tempArr[k], direction, i, newCol);
+                }
+                if (tempArr[k].next) {
+                    move(tempArr[k].next, direction, i, newCol);
                 }
             }
         }
@@ -192,8 +190,11 @@ function analysisActions(direction) {
             }
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
-                if (tempArr[k].row != k || tempArr[k].next) {
+                if (tempArr[k].row != k) {
                     move(tempArr[k], direction, k, j);
+                }
+                if (tempArr[k].next) {
+                    move(tempArr[k].next, direction, k, j);
                 }
             }
         }
@@ -210,8 +211,11 @@ function analysisActions(direction) {
             tempArr = DealOverlap(tempArr);
             for (var k = 0; k < tempArr.length; k++) {
                 var newRow = boardArr[j].length - 1 - k;
-                if (tempArr[k].row != newRow || tempArr[k].next) {
+                if (tempArr[k].row != newRow) {
                     move(tempArr[k], direction, newRow, j);
+                }
+                if (tempArr[k].next) {
+                    move(tempArr[k].next, direction, newRow, j);
                 }
             }
         }
