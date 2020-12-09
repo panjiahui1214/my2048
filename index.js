@@ -22,19 +22,21 @@ function init() {
     // 监听键盘事件
     document.addEventListener("keydown", function (e) {
         if (lock) return;
-        lock = true;
-        switch (e.key) {
-            case "ArrowUp": keyDown("up"); break;
-            case "ArrowDown": keyDown("down"); break;
-            case "ArrowLeft": keyDown("left"); break;
-            case "ArrowRight": keyDown("right"); break;
-            default: break;
-        }
-        lock = false;
-        if (isOver()) {
-            alert("GAME OVER ~");
-            return;
-        }
+        setTimeout(function () {
+            lock = true;
+            if (isOver()) {
+                alert("GAME OVER ~");
+                return;
+            }
+            switch (e.key) {
+                case "ArrowUp": keyDown("up"); break;
+                case "ArrowDown": keyDown("down"); break;
+                case "ArrowLeft": keyDown("left"); break;
+                case "ArrowRight": keyDown("right"); break;
+                default: break;
+            }
+            lock = false;
+        }, 300);
     });
 }
 
@@ -52,7 +54,7 @@ function initBoard() {
         for (var j = 0; j < cols; j++) {
             var temp = createSquareDiv(i, j, 0);
             my2048.appendChild(temp);
-            boardArr[i][j] = 0;
+            boardArr[i][j] = { val: 0 };
         }
     }
 }
@@ -92,9 +94,7 @@ function randSquareDiv() {
 // 根据键盘方向进行操作
 function keyDown(direction) {
     analysisActions(direction);
-    setTimeout(function () {
-        randSquareDiv();
-    }, 600);
+    randSquareDiv();
 }
 
 // 处理重叠小方块
@@ -216,9 +216,7 @@ function analysisActions(direction) {
             }
         }
     }
-    setTimeout(function () {
-        refresh();
-    }, 300);
+    refresh();
 }
 
 // 刷新棋盘小方块
@@ -227,7 +225,7 @@ function refresh() {
         for (var j = 0; j < boardArr[i].length; j++) {
             if (boardArr[i][j].last) {
                 my2048.removeChild(boardArr[i][j].last);
-                boardArr[i][j].last = null;
+                boardArr[i][j].last = undefined;
                 boardArr[i][j].val *= 2;
                 boardArr[i][j].innerHTML = "" + boardArr[i][j].val;
                 boardArr[i][j].style.background = colorMap[boardArr[i][j].val];
