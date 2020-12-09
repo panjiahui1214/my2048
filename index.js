@@ -7,7 +7,7 @@ var fontSize = 50;
 var boardArr = [];
 var lock = false;
 var backgroundColor = "#bbada0";
-var directionMap = { left: { key: "left" }, right: { key: "left" }, up: { key: "top" }, down: { key: "top" } };
+var directionMap = { left: "left", right: "left", up: "top", down: "top" };
 var colorMap = { 0: "#ccc0b3", 2: "#eee4da", 4: "#ede0c8", 8: "#f2b179", 16: "#f59563", 32: "#f67e5f", 64: "#f65e3b", 128: "#edcf72", 256: "#edcc61", 512: "#9c0", 1024: "#33b5e5", 2048: "#09c", 4096: "#5b67ff" };
 
 window.onload = function () {
@@ -43,15 +43,15 @@ function init() {
 // 初始化棋盘
 function initBoard() {
     my2048 = document.getElementById("my2048");
-    my2048.style.width = squareWidth * cols + spacing * (cols + 1) + "px";
-    my2048.style.height = squareWidth * rows + spacing * (rows + 1) + "px";
+    my2048.style.width = spacing * (cols + 1) + squareWidth * cols + "px";
+    my2048.style.height = spacing * (rows + 1) + squareWidth * rows + "px";
     my2048.style.fontSize = fontSize + "px";
     my2048.style.lineHeight = squareWidth + "px";
     my2048.style.background = backgroundColor;
 
-    for (var i = 0; i < rows; i++) {
+    for (var i = 0; i < rows; i ++) {
         boardArr[i] = [];
-        for (var j = 0; j < cols; j++) {
+        for (var j = 0; j < cols; j ++) {
             var temp = createSquareDiv(i, j, 0);
             my2048.appendChild(temp);
             boardArr[i][j] = { val: 0 };
@@ -68,7 +68,7 @@ function createSquareDiv(row, col, val) {
     temp.style.top = spacing * (row + 1) + squareWidth * row + "px";
     temp.style.left = spacing * (col + 1) + squareWidth * col + "px";
     if (val > 0) {
-        temp.innerHTML = "" + val;
+        temp.innerHTML = val;
     }
     temp.row = row;
     temp.col = col;
@@ -79,7 +79,7 @@ function createSquareDiv(row, col, val) {
 // 随机生成小方块div
 function randSquareDiv() {
     randVal = Math.random() >= 0.5 ? 2 : 4;
-    for (; ;) {
+    while(1) {
         randRow = Math.floor(Math.random() * rows);
         randCol = Math.floor(Math.random() * cols);
         if (!boardArr[randRow][randCol].val) {
@@ -123,7 +123,7 @@ function DealOverlap(arr) {
 // 移动小方块
 function move(temp, direction, newRow, newCol) {
     boardArr[temp.row][temp.col] = 0;
-    temp.style.transition = directionMap[direction].key + " 0.3s";
+    temp.style.transition = directionMap[direction] + " 0.3s";
     temp.style.top = spacing * (newRow + 1) + squareWidth * newRow + "px";
     temp.style.left = spacing * (newCol + 1) + squareWidth * newCol + "px";
     temp.row = newRow;
@@ -135,16 +135,16 @@ function move(temp, direction, newRow, newCol) {
 function analysisActions(direction) {
     if (direction == "left") {
         // 循环每行
-        for (var i = 0; i < boardArr.length; i++) {
+        for (var i = 0; i < boardArr.length; i ++) {
             var tempArr = [];
             // 从左往右循环输出有值的小方块div
-            for (var j = 0; j < boardArr[i].length; j++) {
+            for (var j = 0; j < boardArr[i].length; j ++) {
                 if (boardArr[i][j].val) {
                     tempArr.push(boardArr[i][j]);
                 }
             }
             tempArr = DealOverlap(tempArr);
-            for (var k = 0; k < tempArr.length; k++) {
+            for (var k = 0; k < tempArr.length; k ++) {
                 if (tempArr[k].last && tempArr[k].last.col != k) {
                     move(tempArr[k].last, direction, i, k);
                 }
@@ -155,16 +155,16 @@ function analysisActions(direction) {
         }
     } else if (direction == "right") {
         // 循环每行
-        for (var i = 0; i < boardArr.length; i++) {
+        for (var i = 0; i < boardArr.length; i ++) {
             var tempArr = [];
             // 从右往左循环输出有值的小方块div
-            for (var j = boardArr[i].length - 1; j >= 0; j--) {
+            for (var j = boardArr[i].length - 1; j >= 0; j --) {
                 if (boardArr[i][j].val) {
                     tempArr.push(boardArr[i][j]);
                 }
             }
             tempArr = DealOverlap(tempArr);
-            for (var k = 0; k < tempArr.length; k++) {
+            for (var k = 0; k < tempArr.length; k ++) {
                 var newCol = boardArr[i].length - 1 - k;
                 if (tempArr[k].last && tempArr[k].last.col != newCol) {
                     move(tempArr[k].last, direction, i, newCol);
@@ -176,16 +176,16 @@ function analysisActions(direction) {
         }
     } else if (direction == "up") {
         // 循环每列
-        for (var j = 0; j < boardArr.length; j++) {
+        for (var j = 0; j < boardArr.length; j ++) {
             var tempArr = [];
             // 从上往下循环输出有值的小方块div
-            for (var i = 0; i < boardArr[j].length; i++) {
+            for (var i = 0; i < boardArr[j].length; i ++) {
                 if (boardArr[i][j].val) {
                     tempArr.push(boardArr[i][j]);
                 }
             }
             tempArr = DealOverlap(tempArr);
-            for (var k = 0; k < tempArr.length; k++) {
+            for (var k = 0; k < tempArr.length; k ++) {
                 if (tempArr[k].last && tempArr[k].last.row != k) {
                     move(tempArr[k].last, direction, k, j);
                 }
@@ -196,7 +196,7 @@ function analysisActions(direction) {
         }
     } else if (direction == "down") {
         // 循环每列
-        for (var j = 0; j < boardArr.length; j++) {
+        for (var j = 0; j < boardArr.length; j ++) {
             var tempArr = [];
             // 从下往上循环输出有值的小方块div
             for (var i = boardArr[j].length - 1; i >= 0; i--) {
@@ -205,7 +205,7 @@ function analysisActions(direction) {
                 }
             }
             tempArr = DealOverlap(tempArr);
-            for (var k = 0; k < tempArr.length; k++) {
+            for (var k = 0; k < tempArr.length; k ++) {
                 var newRow = boardArr[j].length - 1 - k;
                 if (tempArr[k].last && tempArr[k].last.row != newRow) {
                     move(tempArr[k].last, direction, newRow, j);
@@ -221,13 +221,13 @@ function analysisActions(direction) {
 
 // 刷新棋盘小方块
 function refresh() {
-    for (var i = 0; i < boardArr.length; i++) {
-        for (var j = 0; j < boardArr[i].length; j++) {
+    for (var i = 0; i < boardArr.length; i ++) {
+        for (var j = 0; j < boardArr[i].length; j ++) {
             if (boardArr[i][j].last) {
                 my2048.removeChild(boardArr[i][j].last);
                 boardArr[i][j].last = undefined;
                 boardArr[i][j].val *= 2;
-                boardArr[i][j].innerHTML = "" + boardArr[i][j].val;
+                boardArr[i][j].innerHTML = boardArr[i][j].val;
                 boardArr[i][j].style.background = colorMap[boardArr[i][j].val];
             }
         }
@@ -236,8 +236,8 @@ function refresh() {
 
 // 判断游戏是否结束
 function isOver() {
-    for (var i = 0; i < boardArr.length; i++) {
-        for (var j = 0; j < boardArr[i].length; j++) {
+    for (var i = 0; i < boardArr.length; i ++) {
+        for (var j = 0; j < boardArr[i].length; j ++) {
             if (0 == boardArr[i][j]) {
                 return false;
             }
